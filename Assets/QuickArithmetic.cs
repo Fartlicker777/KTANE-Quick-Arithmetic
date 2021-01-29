@@ -28,6 +28,7 @@ public class QuickArithmetic : MonoBehaviour {
     int FinalPenileLength = -1;
     string SN = "FATASSANSWERCONFIRMCONFIRMANSWERGUCCI";
     int Callitsomethingyoucanremember = -1;
+	bool Activethingy = false;
 
     void Awake()
 	{
@@ -40,12 +41,16 @@ public class QuickArithmetic : MonoBehaviour {
         }
 
         Submit.OnInteract += delegate () { PressSugma(); return false; };
+		GetComponent<KMBombModule>().OnActivate += OnActivate;
     }
 
 	void Start()
 	{
-		Thiccnumerouno = UnityEngine.Random.Range(0,100000000); //Make sure preceeding bullshit happendefn aldfnaksdjf
-		Thiccnumerodos = UnityEngine.Random.Range(0,100000000);
+		Mainfatass.text = "";
+		Leftasscheek.text = "";
+		Rightasscheek.text = "";
+		Thiccnumerouno = UnityEngine.Random.Range(0, 100000000); //Make sure preceeding bullshit happendefn aldfnaksdjf
+		Thiccnumerodos = UnityEngine.Random.Range(0, 100000000);
 		Debug.LogFormat("[Quick Arithmetic #{0}] The two numbers are {1} and {2}.", moduleId, Thiccnumerouno, Thiccnumerodos);
 		FinalPenileLength = Math.Abs(Thiccnumerouno - Thiccnumerodos);
 		SN = Bomb.GetSerialNumber();
@@ -54,25 +59,33 @@ public class QuickArithmetic : MonoBehaviour {
 		FinalPenileLength += Bomb.GetBatteryCount();
 		FinalPenileLength %= 100;
 		Debug.LogFormat("[Quick Arithmetic #{0}] The final number is {1}.", moduleId, FinalPenileLength);
+	}
+
+	void OnActivate()
+    {
+		Leftasscheek.text = Leftasshole.ToString();
+		Rightasscheek.text = Rightasshole.ToString();
 		StartCoroutine(Ibecyclingthesebitches());
+		Activethingy = true;
 	}
 
 	void PressSugma()
 	{
 		Submit.AddInteractionPunch();
-		GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
+		GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Submit.transform);
 		if (Leftasshole * 10 + Rightasshole == FinalPenileLength)
 		{
 			if (moduleSolved == false)
 			{
+				GetComponent<KMBombModule>().HandlePass();
 				Debug.LogFormat("[Quick Arithmetic #{0}] The number you have submitted is {1}. Module disarmed.", moduleId, FinalPenileLength);
 			}
-			GetComponent<KMBombModule>().HandlePass();
 			StopAllCoroutines();
 			moduleSolved = true;
 
 			if (FinalPenileLength == 69)
 			{
+				Mainfatass.gameObject.transform.localPosition = new Vector3(0, 0.0234f, 0.0331f);
 				Mainfatass.text = ";)";
 			}
 
@@ -94,26 +107,30 @@ public class QuickArithmetic : MonoBehaviour {
 	void ArrowPress (KMSelectable Arrow)
 	{
 		Arrow.AddInteractionPunch();
-		GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
+		GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Arrow.transform);
 		if (Arrow == Arrows[0])
 		{
 			Leftasshole = (Leftasshole + 9) % 10;
-			Leftasscheek.text = Leftasshole.ToString();
+			if (Activethingy)
+				Leftasscheek.text = Leftasshole.ToString();
 		}
 		else if (Arrow == Arrows[1])
 		{
 			Rightasshole = (Rightasshole + 9) % 10;
-			Rightasscheek.text = Rightasshole.ToString();
+			if (Activethingy)
+				Rightasscheek.text = Rightasshole.ToString();
 		}
 		else if (Arrow == Arrows[2])
 		{
 			Leftasshole = (Leftasshole + 1) % 10;
-			Leftasscheek.text = Leftasshole.ToString();
+			if (Activethingy)
+				Leftasscheek.text = Leftasshole.ToString();
 		}
 		else if (Arrow == Arrows[3])
 		{
 			Rightasshole = (Rightasshole + 1) % 10;
-			Rightasscheek.text = Rightasshole.ToString();
+			if (Activethingy)
+				Rightasscheek.text = Rightasshole.ToString();
 		}
 		else
 		{
@@ -197,6 +214,35 @@ public class QuickArithmetic : MonoBehaviour {
 
 	string[] GodDamnNumbers = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
+	private int DetermineDir(int pos, int target)
+    {
+		int[] nums = new int[] { Leftasshole, Rightasshole };
+		int t = nums[pos];
+		int c1 = 0;
+		int c2 = 0;
+		while (t != target)
+        {
+			c1++;
+			t++;
+			if (t >= 10)
+				t = 0;
+        }
+		t = nums[pos];
+		while (t != target)
+		{
+			c2++;
+			t--;
+			if (t <= -1)
+				t = 9;
+		}
+		if (c1 < c2)
+			return 0;
+		else if (c1 > c2)
+			return 1;
+		else
+			return 2;
+	}
+
 	IEnumerator ProcessTwitchCommand(string command)
 	{
 		string[] parameters = command.Split(' ');
@@ -229,20 +275,46 @@ public class QuickArithmetic : MonoBehaviour {
 			{
 				if (Numberer == 0)
 				{
+					int dir = DetermineDir(0, int.Parse(c.ToString()));
+					int pick = -1;
+					if (dir == 2)
+                    {
+						pick = UnityEngine.Random.Range(0, 3);
+						while (pick == 1)
+							pick = UnityEngine.Random.Range(0, 3);
+					}
 					while (Leftasscheek.text != c.ToString())
 					{
-						Arrows[2].OnInteract();
-						yield return new WaitForSecondsRealtime(0.1f);
+						if (dir == 0)
+							Arrows[2].OnInteract();
+						else if (dir == 1)
+							Arrows[0].OnInteract();
+                        else
+							Arrows[pick].OnInteract();
+						yield return new WaitForSeconds(0.1f);
 					}
 					Numberer++;
 				}
 
 				else if (Numberer == 1)
 				{
+					int dir = DetermineDir(1, int.Parse(c.ToString()));
+					int pick = -1;
+					if (dir == 2)
+					{
+						pick = UnityEngine.Random.Range(1, 4);
+						while (pick == 2)
+							pick = UnityEngine.Random.Range(1, 4);
+					}
 					while (Rightasscheek.text != c.ToString())
 					{
-						Arrows[3].OnInteract();
-						yield return new WaitForSecondsRealtime(0.1f);
+						if (dir == 0)
+							Arrows[3].OnInteract();
+						else if (dir == 1)
+							Arrows[1].OnInteract();
+						else
+							Arrows[pick].OnInteract();
+						yield return new WaitForSeconds(0.1f);
 					}
 					Numberer++;
 				}
@@ -255,4 +327,12 @@ public class QuickArithmetic : MonoBehaviour {
 			Submit.OnInteract();
 		}
 	}
+
+	IEnumerator TwitchHandleForcedSolve()
+    {
+		yield return null;
+		string why = FinalPenileLength.ToString().Length == 1 ? "0" + FinalPenileLength : FinalPenileLength.ToString();
+		yield return ProcessTwitchCommand("select " + why);
+		Submit.OnInteract();
+    }
 }
